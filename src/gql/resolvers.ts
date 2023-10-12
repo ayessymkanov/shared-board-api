@@ -27,6 +27,23 @@ export const resolvers = {
           }
         }
       })
+    },
+    cards: () => prisma.card.findMany(),
+    card: async (_: any, args: {id: string}) => {
+      const card = await prisma.card.findFirst({
+        where: {
+          id: args.id,
+        }
+      });
+      const assignee = await prisma.user.findFirst({
+        where: {
+          id: card?.assigneeId,
+        }
+      });
+      return {
+        ...card,
+        assignee,
+      }
     }
   },
 };

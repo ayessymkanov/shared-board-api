@@ -1,26 +1,18 @@
-
 import { PrismaClient } from '@prisma/client'
+
 const prisma = new PrismaClient()
+
 async function main() {
-  const arman = await prisma.userTeam.create({
+  const card1 = await prisma.card.create({
     data: {
-      user_id: 1,
-      team_id: 1
+      title: 'Call insurance',
+      assigneeId: 1,
+      teamId: 1,
+      status: 'Open',
+      dueDateTime: new Date(),
     }
-  })
-  const azhar = await prisma.userTeam.create({
-    data: {
-      user_id: 2,
-      team_id: 1
-    }
-  })
-  const askar = await prisma.userTeam.create({
-    data: {
-      user_id: 3,
-      team_id: 1
-    }
-  })
-  console.log({ arman, azhar, askar });
+  });
+  console.log({ card1 });
 }
 main()
   .then(async () => {

@@ -20,10 +20,9 @@ model Card {
   assigneeId  Int
   createdAt   DateTime @default(now())
   dueDateTime DateTime
-  team_id     Int
-  team        Team     @relation(name: "CardTeam", fields: [team_id], references: [id])
+  team        Team     @relation(name: "CardTeam", fields: [teamId], references: [id])
   status      Status   @default(Open)
-  teamId      Int?
+  teamId      Int
 }
 
 model Team {

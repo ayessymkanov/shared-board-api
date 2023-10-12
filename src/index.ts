@@ -5,6 +5,7 @@ import { resolvers } from './gql/resolvers';
 import { typeDefs } from './gql/schema';
 
 const app = express();
+const PORT = 8000;
 
 const schema = makeExecutableSchema({
   resolvers,
@@ -16,6 +17,6 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true,
 }));
 
-app.listen(8000, () => {
-  console.log('server listening on port 8000');
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
