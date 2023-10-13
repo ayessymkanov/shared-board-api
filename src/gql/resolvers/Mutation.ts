@@ -74,16 +74,21 @@ export const Mutation = {
       throw new Error('Not valid credentials');
     }
 
-    const token =  jsonwebtoken.sign(
+    // const token =  jsonwebtoken.sign(
+    //   { id: user.id, email: user.email },
+    //   process.env.JWT_SECRET as string,
+    //   { expiresIn: '1y' }
+    // );
+
+    // context.res.cookie("access_token", token, {
+    //   httpOnly: true,
+    // });
+    // return token
+    return jsonwebtoken.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET as string,
       { expiresIn: '1y' }
     );
-
-    context.res.cookie("access_token", token, {
-      httpOnly: true,
-    });
-    return token
   },
   addTeam: (_: any, args: AddTeamArgs) => prisma.team.create({
     data: {

@@ -1,7 +1,9 @@
 import prisma from "../../prismaClient";
 
 export const Query = {
-  users: () => prisma.user.findMany(),
+  users: (_: any, args: any, context: any) => {
+    return prisma.user.findMany()
+  },
   user: (_: any, args: { id: number }) => prisma.user.findFirst({
     where: {
       id: args.id,

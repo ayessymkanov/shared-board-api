@@ -1,35 +1,22 @@
-import express from 'express';
-import { graphqlHTTP } from "express-graphql";
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import cookieParser from "cookie-parser";
-// import { expressjwt as jwt } from "express-jwt";
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from '@apollo/server/standalone';
 import "dotenv/config";
 import { resolvers } from './gql/resolvers';
 import { typeDefs } from './gql/schema';
 
-const app = express();
-const PORT = 8000;
+type Context = {
+  user?: any;
+}
 
-const schema = makeExecutableSchema({
-  resolvers,
+const server = new ApolloServer<Context>({
   typeDefs,
+  resolvers,
+  introspection: true,
 });
 
-const secret = process.env.JWT_SECRET ?? "";
-
-// const auth = jwt({
-//   secret,
-//   credentialsRequired: false,
-//   algorithms: ["HS256"],
-// });
-
-app.use(cookieParser());
-
-app.use('/graphql', graphqlHTTP({
-  schema,
-  graphiql: true,
-}));
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+startStandaloneServer(server, {
+  listen: { port: 8000 },
+  context: async ({ req }) => ({}),
+}).then(({ url }) => {
+  console.log(`Server started at ${url}`);
 });
