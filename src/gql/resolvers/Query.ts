@@ -1,7 +1,11 @@
 import prisma from "../../prismaClient";
 
 export const Query = {
+  me: (_: any, args: any, context: any) => context.user,
   users: (_: any, args: any, context: any) => {
+    if (!context.user) {
+      throw new Error('Unauthorized');
+    }
     return prisma.user.findMany()
   },
   user: (_: any, args: { id: number }) => prisma.user.findFirst({

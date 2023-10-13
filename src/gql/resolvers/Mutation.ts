@@ -48,16 +48,11 @@ export const Mutation = {
       }
     });
 
-    const token = jsonwebtoken.sign(
-      { id: newUser?.id, email: newUser?.email },
+    return jsonwebtoken.sign(
+      { id: newUser?.id, email: newUser?.email, name: newUser.name },
       process.env.JWT_SECRET as string,
       { expiresIn: '1y' },
     );
-
-    context.res.cookie("access_token", token, {
-      httpOnly: true,
-    });
-    return token;
   },
   login: async (_: any, args: LoginArgs, context: any) => {
     const user = await prisma.user.findFirst({
@@ -74,18 +69,8 @@ export const Mutation = {
       throw new Error('Not valid credentials');
     }
 
-    // const token =  jsonwebtoken.sign(
-    //   { id: user.id, email: user.email },
-    //   process.env.JWT_SECRET as string,
-    //   { expiresIn: '1y' }
-    // );
-
-    // context.res.cookie("access_token", token, {
-    //   httpOnly: true,
-    // });
-    // return token
     return jsonwebtoken.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, name: user.name },
       process.env.JWT_SECRET as string,
       { expiresIn: '1y' }
     );
