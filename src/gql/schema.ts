@@ -2,12 +2,13 @@ export const typeDefs = `#graphql
   type User {
     name: String!
     email: String!
-    id: Int!
+    id: ID!
   }
 
   type Team {
     name: String!
-    id: Int!
+    id: ID!
+    cards: [Card!]!
   }
 
   enum Status {
@@ -18,7 +19,7 @@ export const typeDefs = `#graphql
 
   type CardRaw {
     title: String!
-    id: String!
+    id: ID!
     assigneeId: Int!
     createdAt: String!
     dueDateTime: String!
@@ -28,12 +29,13 @@ export const typeDefs = `#graphql
 
   type Card {
     title: String!
-    id: String!
-    assignee: User!
+    id: ID!
+    assigneeId: Int!
     createdAt: String!
     dueDateTime: String!
     teamId: Int!
     status: Status!
+    assignee: User!
   }
 
   type Query {
@@ -44,5 +46,26 @@ export const typeDefs = `#graphql
     teamMembers(id: Int!): [User!]!
     cards: [CardRaw!]!
     card(id: String!): Card
+  }
+
+  type Mutation {
+    addTeam(input: AddTeamInput!): Team!
+    signup(input: SignupInput): String!
+    login(input: LoginInput): String!
+  }
+
+  input AddTeamInput {
+    name: String!
+  }
+
+  input SignupInput {
+    name: String!
+    email: String!
+    password: String!
+  }
+
+  input LoginInput {
+    email: String!
+    password: String!
   }
 `;

@@ -8,10 +8,11 @@ generator client {
 }
 
 model User {
-  id       Int        @id @default(autoincrement())
-  name     String
-  email    String
-  UserTeam UserTeam[] @relation(name: "UserId")
+  id           Int        @id @default(autoincrement())
+  name         String
+  email        String
+  passwordHash String
+  UserTeam     UserTeam[] @relation(name: "UserId")
 }
 
 model Card {
