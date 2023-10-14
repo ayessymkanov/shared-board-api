@@ -1,25 +1,33 @@
 import prisma from "../../prismaClient";
 
+type ArgsType = {
+  id: number;
+}
+
+type CardArgsType = {
+  id: string;
+}
+
 export const Query = {
-  me: (_: any, args: any, context: any) => context.user,
-  users: (_: any, args: any, context: any) => {
+  me: (_: unknown, args: unknown, context: Context) => context.user,
+  users: (_: unknown, args: unknown, context: Context) => {
     if (!context.user) {
       throw new Error('Unauthorized');
     }
-    return prisma.user.findMany()
+    return prisma.user.findMany();
   },
-  user: (_: any, args: { id: number }) => prisma.user.findFirst({
+  user: (_: unknown, args: ArgsType) => prisma.user.findUnique({
     where: {
       id: args.id,
     },
   }),
   teams: () => prisma.team.findMany(),
-  team: (_: any, args: { id: number }) => prisma.team.findFirst({
+  team: (_: unknown, args: ArgsType) => prisma.team.findUnique({
     where: {
       id: args.id,
-    }
+    },
   }),
-  teamMembers: async (_: any, args: { id: number }) => {
+  teamMembers: async (_: unknown, args: ArgsType) => {
     const userTeamsResponse = await prisma.userTeam.findMany({
       where: {
         team_id: args.id, 
@@ -29,14 +37,14 @@ export const Query = {
       where: {
         id: {
           in: userTeamsResponse.map(r => r.user_id),
-        }
-      }
-    })
+        },
+      },
+    });
   },
   cards: () => prisma.card.findMany(),
-  card: async (_: any, args: {id: string}, context: any) => prisma.card.findFirst({
+  card: async (_: unknown, args: CardArgsType) => prisma.card.findUnique({
     where: {
       id: args.id,
-    }
+    },
   }),
 };

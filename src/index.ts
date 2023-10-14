@@ -1,13 +1,9 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from '@apollo/server/standalone';
 import "dotenv/config";
-import jsonwebtoken from "jsonwebtoken";
 import { resolvers } from './gql/resolvers';
 import { typeDefs } from './gql/schema';
-
-type Context = {
-  user?: any;
-}
+import { getUser } from "./utils";
 
 const server = new ApolloServer<Context>({
   typeDefs,
@@ -15,18 +11,6 @@ const server = new ApolloServer<Context>({
 });
 
 const WHITE_LIST_OPERATIONS = ["Signup", "Login"];
-
-const getUser = async (token?: string) => {
-  try {
-    if (!token) {
-      return null;
-    }
-    const user = await jsonwebtoken.verify(token, process.env.JWT_SECRET as string, { algorithms: ['HS256']});
-    return user;
-  } catch (err) {
-    return null
-  }
-}
 
 startStandaloneServer(server, {
   listen: { port: 8000 },

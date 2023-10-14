@@ -30,7 +30,7 @@ type LoginArgs = {
 }
 
 export const Mutation = {
-  signup: async (_: any, args: SignupArgs, context: any) => {
+  signup: async (_: any, args: SignupArgs) => {
     const { email, name, password } = args.input;
     const user = await prisma.user.findFirst({
       where: {
@@ -54,7 +54,7 @@ export const Mutation = {
       { expiresIn: '1y' },
     );
   },
-  login: async (_: any, args: LoginArgs, context: any) => {
+  login: async (_: any, args: LoginArgs) => {
     const user = await prisma.user.findFirst({
       where: {
         email: args.input.email,
@@ -75,9 +75,16 @@ export const Mutation = {
       { expiresIn: '1y' }
     );
   },
-  addTeam: (_: any, args: AddTeamArgs) => prisma.team.create({
-    data: {
-      name: args.input.name
+  addTeam: (_: any, args: AddTeamArgs, context: Context) => {
+    if (!context.user) {
+      throw new Error('Unauthorized');
     }
-  }),
+
+    return prisma.team.create({
+      data: {
+        name: args.input.name,
+        adminId: context.user.id,
+      }
+    });
+  },
 };

@@ -29,6 +29,7 @@ model Card {
 model Team {
   id       Int        @id @default(autoincrement())
   name     String
+  adminId  Int
   UserTeam UserTeam[] @relation(name: "TeamId")
   Card     Card[]     @relation(name: "CardTeam")
 }
