@@ -29,6 +29,15 @@ type LoginArgs = {
   input: LoginInput;
 }
 
+type AddTeamMemberInput = {
+  userId: number;
+  teamId: number;
+}
+
+type AddTeamMemberArgs = {
+  input: AddTeamMemberInput;
+}
+
 export const Mutation = {
   signup: async (_: any, args: SignupArgs) => {
     const { email, name, password } = args.input;
@@ -75,16 +84,48 @@ export const Mutation = {
       { expiresIn: '1y' }
     );
   },
-  addTeam: (_: any, args: AddTeamArgs, context: Context) => {
+  addTeam: async (_: any, args: AddTeamArgs, context: Context) => {
     if (!context.user) {
       throw new Error('Unauthorized');
     }
 
-    return prisma.team.create({
+    const team = await prisma.team.create({
       data: {
         name: args.input.name,
         adminId: context.user.id,
       }
     });
+
+    await prisma.userTeam.create({
+      data: {
+        team_id: team.id,
+        user_id: team.adminId,
+      }
+    });
+
+    return team;
+  },
+  addTeamMember: async (_: unknown, args: AddTeamMemberArgs, context: Context) => {
+    if (!context.user) {
+      throw new Error('Unauthorized');
+    }
+
+    const team = await prisma.team.findUnique({
+      where: {
+        id: args.input.teamId,
+      },
+    });
+    
+    if (team?.adminId !== context.user.id) {
+      throw new Error('Not an admin');
+    }
+
+    await prisma.userTeam.create({
+      data: {
+        team_id: args.input.teamId,
+        user_id: args.input.userId,
+      },
+    });
+    return 'added';
   },
 };

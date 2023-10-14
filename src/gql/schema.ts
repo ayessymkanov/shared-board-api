@@ -8,6 +8,7 @@ export const typeDefs = `#graphql
   type Team {
     name: String!
     id: ID!
+    adminId: Int!
     cards: [Card!]!
   }
 
@@ -53,6 +54,7 @@ export const typeDefs = `#graphql
     addTeam(input: AddTeamInput!): Team!
     signup(input: SignupInput): String!
     login(input: LoginInput): String!
+    addTeamMember(input: AddTeamMemberInput!): String!
   }
 
   input AddTeamInput {
@@ -68,5 +70,10 @@ export const typeDefs = `#graphql
   input LoginInput {
     email: String!
     password: String!
+  }
+
+  input AddTeamMemberInput {
+    userId: Int!
+    teamId: Int!
   }
 `;
