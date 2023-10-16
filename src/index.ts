@@ -1,10 +1,11 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from '@apollo/server/standalone';
+import { readFileSync } from "fs";
 import "dotenv/config";
 import { resolvers } from './gql/resolvers';
-import { typeDefs } from './gql/schema';
 import { getUser } from "./utils";
 
+const typeDefs = readFileSync("./src/gql/schema.graphql", { encoding: "utf-8"});
 const server = new ApolloServer<Context>({
   typeDefs,
   resolvers,
