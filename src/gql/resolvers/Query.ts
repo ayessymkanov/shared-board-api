@@ -8,10 +8,6 @@ type CardArgsType = {
   id: string;
 }
 
-type TeamsArgs = {
-  userId: number;
-}
-
 export const Query = {
   me: (_: unknown, args: unknown, context: Context) => {
     if (!context.user) {
@@ -37,13 +33,13 @@ export const Query = {
       },
     });
   },
-  teams: async (_: unknown, args: TeamsArgs, context: Context) => {
+  teams: async (_: unknown, args: unknown, context: Context) => {
     if (!context.user) {
       throw new Error('Unauthorized');
     }
     const userTeamsResponse = await prisma.userTeam.findMany({
       where: {
-        user_id: args.userId,
+        user_id: context.user.id,
       }
     });
 

@@ -9,6 +9,7 @@ type Team {
   id: ID!
   adminId: Int!
   cards: [Card!]!
+  teamMembers: [User!]!
 }
 
 enum Status {
@@ -42,7 +43,7 @@ type Query {
   me: User!
   users: [User!]!
   user(id: Int!): User
-  teams(userId: Int!): [Team!]!
+  teams: [Team!]!
   team(id: Int!): Team
   teamMembers(id: Int!): [User!]!
   cards: [CardRaw!]!
