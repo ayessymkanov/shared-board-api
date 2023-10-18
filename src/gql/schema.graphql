@@ -55,6 +55,7 @@ type Mutation {
   signup(input: SignupInput): String!
   login(input: LoginInput): String!
   addTeamMember(input: AddTeamMemberInput!): String!
+  addCard(input: AddCardInput!): String!
 }
 
 input AddTeamInput {
@@ -74,5 +75,12 @@ input LoginInput {
 
 input AddTeamMemberInput {
   userId: Int!
+  teamId: Int!
+}
+
+input AddCardInput {
+  title: String!
+  assigneeId: Int!
+  dueDateTime: String!
   teamId: Int!
 }

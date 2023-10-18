@@ -38,6 +38,17 @@ type AddTeamMemberArgs = {
   input: AddTeamMemberInput;
 }
 
+type AddCardInput = {
+  title: string;
+  assigneeId: number;
+  dueDateTime: string;
+  teamId: number;
+}
+
+type AddCardArgs = {
+  input: AddCardInput;
+}
+
 export const Mutation = {
   signup: async (_: any, args: SignupArgs) => {
     const { email, name, password } = args.input;
@@ -127,5 +138,20 @@ export const Mutation = {
       },
     });
     return 'added';
+  },
+  addCard: async (_: unknown, args: AddCardArgs, context: Context) => {
+    if (!context.user) {
+      throw new Error('Unauthorized');
+    }
+    const card = await prisma.card.create({
+      data: {
+        title: args.input.title,
+        assigneeId: args.input.assigneeId,
+        dueDateTime: new Date(args.input.dueDateTime),
+        teamId: args.input.teamId,
+      }
+    });
+
+    return card.id;
   },
 };
