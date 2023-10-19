@@ -47,6 +47,7 @@ type Query {
   team(id: Int!): Team
   teamMembers(id: Int!): [User!]!
   cards: [CardRaw!]!
+  userCards: [CardRaw!]!
   card(id: String!): Card
 }
 

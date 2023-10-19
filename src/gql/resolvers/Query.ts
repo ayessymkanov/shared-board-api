@@ -69,7 +69,7 @@ export const Query = {
 
     const userTeamsResponse = await prisma.userTeam.findMany({
       where: {
-        team_id: args.id, 
+        team_id: args.id,
       },
     });
     return prisma.user.findMany({
@@ -95,6 +95,17 @@ export const Query = {
     return prisma.card.findUnique({
       where: {
         id: args.id,
+      },
+    });
+  },
+  userCards: (_: unknown, args: unknown, context: Context) => {
+    if (!context.user) {
+      throw new Error('Unauthorized');
+    }
+
+    return prisma.card.findMany({
+      where: {
+        assigneeId: context.user.id,
       },
     });
   },

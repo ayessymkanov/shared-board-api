@@ -5,7 +5,7 @@ import "dotenv/config";
 import { resolvers } from './gql/resolvers';
 import { getUser } from "./utils";
 
-const typeDefs = readFileSync("./src/gql/schema.graphql", { encoding: "utf-8"});
+const typeDefs = readFileSync("./src/gql/schema.graphql", { encoding: "utf-8" });
 const server = new ApolloServer<Context>({
   typeDefs,
   resolvers,
@@ -22,7 +22,7 @@ startStandaloneServer(server, {
     }
     const authHeader = req.headers.authorization;
     const token = authHeader?.split(' ')[1];
-    const user = await getUser(token);
+    const user = getUser(token);
     return { user };
   }
 }).then(({ url }) => {
