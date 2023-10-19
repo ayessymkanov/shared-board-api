@@ -1,4 +1,5 @@
 import prisma from "../../prismaClient";
+import { convertToDate } from "../../utils";
 
 type ArgsType = {
   id: number;
@@ -109,4 +110,18 @@ export const Query = {
       },
     });
   },
+  today: async (_: unknown, args: unknown, context: Context) => {
+    if (!context.user) {
+      throw new Error('Unauthorized');
+    }
+    const cards = await prisma.card.findMany({
+      where: {
+        assigneeId: context.user.id,
+      },
+    });
+    const now = Date.now();
+    const todayDate = convertToDate(now);
+
+    return cards.filter((card) => convertToDate(card.dueDateTime) === todayDate);
+  }
 };

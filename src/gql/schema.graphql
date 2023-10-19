@@ -49,6 +49,7 @@ type Query {
   cards: [CardRaw!]!
   userCards: [CardRaw!]!
   card(id: String!): Card
+  today: [Card]!
 }
 
 type Mutation {

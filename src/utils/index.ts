@@ -13,3 +13,12 @@ export const getUser = (token?: string) => {
     return null;
   }
 }
+
+export const convertToDate = (timestamp: number | Date) => {
+  const date = new Date(timestamp);
+  const day = date.getDay();
+  const month = date.getMonth();
+  const year = date.getFullYear();
+
+  return `${day}${month}${year}`;
+}
