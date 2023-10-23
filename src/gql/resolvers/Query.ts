@@ -52,8 +52,19 @@ export const Query = {
       },
     });
   },
-  team: (_: unknown, args: ArgsType, context: Context) => {
+  team: async (_: unknown, args: ArgsType, context: Context) => {
     if (!context.user) {
+      throw new Error('Unauthorized');
+    }
+
+    const userTeam = await prisma.userTeam.findFirst({
+      where: {
+        user_id: context.user.id,
+        team_id: args.id,
+      }
+    });
+
+    if (!userTeam) {
       throw new Error('Unauthorized');
     }
 

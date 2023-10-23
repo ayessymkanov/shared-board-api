@@ -126,7 +126,7 @@ export const Mutation = {
         id: args.input.teamId,
       },
     });
-    
+
     if (team?.adminId !== context.user.id) {
       throw new Error('Not an admin');
     }
@@ -143,15 +143,19 @@ export const Mutation = {
     if (!context.user) {
       throw new Error('Unauthorized');
     }
-    const card = await prisma.card.create({
-      data: {
-        title: args.input.title,
-        assigneeId: args.input.assigneeId,
-        dueDateTime: new Date(args.input.dueDateTime),
-        teamId: args.input.teamId,
-      }
-    });
-
-    return card.id;
+    try {
+      const card = await prisma.card.create({
+        data: {
+          title: args.input.title,
+          assigneeId: args.input.assigneeId,
+          dueDateTime: new Date(args.input.dueDateTime),
+          teamId: args.input.teamId,
+        }
+      });
+      return card.id;
+    } catch (error) {
+      console.log(error)
+      throw new Error('something went wrong')
+    }
   },
 };
