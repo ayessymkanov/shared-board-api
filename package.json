@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon",
+    "seed": "ts-node ./prisma/seed.ts",
     "build": "tsc"
   },
   "keywords": [],

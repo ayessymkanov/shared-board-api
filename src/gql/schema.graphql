@@ -2,6 +2,7 @@ type User {
   name: String!
   email: String!
   id: ID!
+  personalBoardId: Int
 }
 
 type Team {

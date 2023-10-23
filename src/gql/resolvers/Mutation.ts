@@ -60,19 +60,53 @@ export const Mutation = {
     if (user?.id) {
       throw new Error('User with that email already exists');
     }
-    const newUser = await prisma.user.create({
-      data: {
-        email,
-        name,
-        passwordHash: await bcrypt.hash(password, 10),
-      }
-    });
 
-    return jsonwebtoken.sign(
-      { id: newUser?.id, email: newUser?.email, name: newUser.name },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '1y' },
-    );
+    try {
+      const newUser = await prisma.user.create({
+        data: {
+          email,
+          name,
+          passwordHash: await bcrypt.hash(password, 10),
+        }
+      });
+
+      const personalBoard = await prisma.team.create({
+        data: {
+          name: "personal",
+          adminId: newUser.id,
+        }
+      });
+      console.log(personalBoard);
+
+      const promises = [
+        await prisma.userTeam.create({
+          data: {
+            team_id: personalBoard.id,
+            user_id: newUser.id,
+          },
+        }),
+        await prisma.user.update({
+          where: {
+            id: newUser.id,
+          },
+          data: {
+            personalBoardId: personalBoard.id,
+          },
+        }),
+      ];
+
+      const [userTeam, user] = await Promise.all(promises);
+      console.log({ userTeam, user });
+
+      return jsonwebtoken.sign(
+        { id: newUser?.id, email: newUser?.email, name: newUser.name },
+        process.env.JWT_SECRET as string,
+        { expiresIn: '1y' },
+      );
+    } catch (err) {
+      console.log(err);
+      throw new Error('Something went wrong');
+    }
   },
   login: async (_: any, args: LoginArgs) => {
     const user = await prisma.user.findFirst({
@@ -90,7 +124,7 @@ export const Mutation = {
     }
 
     return jsonwebtoken.sign(
-      { id: user.id, email: user.email, name: user.name },
+      { id: user.id, email: user.email, name: user.name, personalBoardId: user.personalBoardId, },
       process.env.JWT_SECRET as string,
       { expiresIn: '1y' }
     );

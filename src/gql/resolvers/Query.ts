@@ -41,6 +41,9 @@ export const Query = {
     const userTeamsResponse = await prisma.userTeam.findMany({
       where: {
         user_id: context.user.id,
+        NOT: {
+          id: context.user.personalBoardId,
+        }
       }
     });
 

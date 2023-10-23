@@ -12,6 +12,7 @@ model User {
   name         String
   email        String
   passwordHash String
+  personalBoardId Int     @default(autoincrement())
   UserTeam     UserTeam[] @relation(name: "UserId")
 }
 
