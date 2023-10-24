@@ -7,4 +7,9 @@ export const Card = {
       id: parent.assigneeId,
     },
   }),
+  team: (parent: CardType) => prisma.team.findUnique({
+    where: {
+      id: parent.teamId,
+    },
+  }),
 };

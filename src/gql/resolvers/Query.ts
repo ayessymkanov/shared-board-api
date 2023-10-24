@@ -1,3 +1,4 @@
+import { addDays } from "date-fns";
 import prisma from "../../prismaClient";
 import { convertToDate } from "../../utils";
 
@@ -7,6 +8,14 @@ type ArgsType = {
 
 type CardArgsType = {
   id: string;
+}
+
+type CardsArgs = {
+  input: CardsFilterInput;
+}
+
+type CardsFilterInput = {
+  timestamp?: number;
 }
 
 export const Query = {
@@ -95,12 +104,28 @@ export const Query = {
       },
     });
   },
-  cards: (_: unknown, args: unknown, context: Context) => {
+  cards: (_: unknown, args: CardsArgs, context: Context) => {
     if (!context.user) {
       throw new Error('Unauthorized');
     }
+    let minDate = new Date("1/1/1970");
+    let maxDate = new Date("1/1/2070");
 
-    return prisma.card.findMany();
+    if (args?.input?.timestamp) {
+      const timestampNum = Number(args.input.timestamp);
+      minDate = new Date(timestampNum);
+      maxDate = addDays(new Date(timestampNum), 1);
+    }
+
+    return prisma.card.findMany({
+      where: {
+        assigneeId: context.user.id,
+        dueDateTime: {
+          lt: maxDate,
+          gte: minDate,
+        }
+      }
+    });
   },
   card: async (_: unknown, args: CardArgsType, context: Context) => {
     if (!context.user) {

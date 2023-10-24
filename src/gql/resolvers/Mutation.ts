@@ -72,7 +72,7 @@ export const Mutation = {
 
       const personalBoard = await prisma.team.create({
         data: {
-          name: "personal",
+          name: "Personal",
           adminId: newUser.id,
         }
       });

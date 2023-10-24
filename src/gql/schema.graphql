@@ -38,6 +38,7 @@ type Card {
   teamId: Int!
   status: Status!
   assignee: User!
+  team: Team!
 }
 
 type Query {
@@ -47,8 +48,8 @@ type Query {
   teams: [Team!]!
   team(id: Int!): Team
   teamMembers(id: Int!): [User!]!
-  cards: [CardRaw!]!
-  userCards: [CardRaw!]!
+  cards(input: CardsFilterInput): [Card!]!
+  userCards: [Card!]!
   card(id: String!): Card
   today: [Card]!
 }
@@ -86,4 +87,8 @@ input AddCardInput {
   assigneeId: Int!
   dueDateTime: String!
   teamId: Int!
+}
+
+input CardsFilterInput {
+  timestamp: String
 }
