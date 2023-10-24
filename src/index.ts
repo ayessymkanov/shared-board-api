@@ -5,6 +5,8 @@ import "dotenv/config";
 import { resolvers } from './gql/resolvers';
 import { getUser } from "./utils";
 
+const PORT = Number(process.env.PORT ?? 8000);
+
 const typeDefs = readFileSync("./src/gql/schema.graphql", { encoding: "utf-8" });
 const server = new ApolloServer<Context>({
   typeDefs,
@@ -14,7 +16,7 @@ const server = new ApolloServer<Context>({
 const WHITE_LIST_OPERATIONS = ["Signup", "Login"];
 
 startStandaloneServer(server, {
-  listen: { port: 8000 },
+  listen: { port: PORT },
   context: async ({ req }) => {
     // @ts-ignore
     if (WHITE_LIST_OPERATIONS.includes(req.body.operationName)) {
