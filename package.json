@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx nodemon",
     "seed": "ts-node ./prisma/seed.ts",
-    "build": "npx prisma generate && tsc"
+    "build": "npx prisma generate && tsc && npx prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
