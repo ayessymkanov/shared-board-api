@@ -99,7 +99,7 @@ export const Mutation = {
       console.log({ userTeam, user });
 
       return jsonwebtoken.sign(
-        { id: newUser?.id, email: newUser?.email, name: newUser.name },
+        { id: newUser?.id, email: newUser?.email, name: newUser.name, personalBoardId: newUser.personalBoardId },
         process.env.JWT_SECRET as string,
         { expiresIn: '1y' },
       );
