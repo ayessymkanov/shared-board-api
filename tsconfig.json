@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "es2016",
     "lib": [
-      "ES6"
+      "es6"
     ],
-    "module": "ESNext",
+    "module": "commonjs",
     "rootDir": "src",
-    "moduleResolution": "NodeNext",
     "resolveJsonModule": true, /* Enable importing .json files. */
     "allowJs": true, /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
     "outDir": "build", /* Specify an output folder for all emitted files. */
