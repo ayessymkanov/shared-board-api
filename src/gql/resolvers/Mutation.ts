@@ -76,7 +76,6 @@ export const Mutation = {
           adminId: newUser.id,
         }
       });
-      console.log(personalBoard);
 
       const promises = [
         await prisma.userTeam.create({
@@ -95,8 +94,7 @@ export const Mutation = {
         }),
       ];
 
-      const [userTeam, user] = await Promise.all(promises);
-      console.log({ userTeam, user });
+      await Promise.all(promises);
 
       return jsonwebtoken.sign(
         { id: newUser?.id, email: newUser?.email, name: newUser.name, personalBoardId: newUser.personalBoardId },
