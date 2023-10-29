@@ -56,25 +56,12 @@ type Query {
 
 type Mutation {
   addTeam(input: AddTeamInput!): Team!
-  signup(input: SignupInput): String!
-  login(input: LoginInput): String!
   addTeamMember(input: AddTeamMemberInput!): String!
   addCard(input: AddCardInput!): String!
 }
 
 input AddTeamInput {
   name: String!
-}
-
-input SignupInput {
-  name: String!
-  email: String!
-  password: String!
-}
-
-input LoginInput {
-  email: String!
-  password: String!
 }
 
 input AddTeamMemberInput {

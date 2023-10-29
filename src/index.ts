@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import http from "http";
 import { ApolloServer } from "@apollo/server";
 import cors, { CorsOptions } from "cors";
@@ -7,6 +7,8 @@ import { readFileSync } from "fs";
 import "dotenv/config";
 import { resolvers } from './gql/resolvers';
 import { getUser } from "./utils";
+import authRouter from "./authRoutes";
+import { error } from "./middleware/error";
 
 const PORT = Number(process.env.PORT ?? 8000);
 const isProd = process.env.NODE_ENV === "prod";
@@ -24,11 +26,15 @@ const corsOptions: CorsOptions = {
   origin: true,
   credentials: true,
 }
+
 if (isProd) {
   corsOptions.origin = process.env.CLIENT_ORIGIN;
 }
 
+app.use(express.json());
 app.use(cors<cors.CorsRequest>(corsOptions));
+app.use(authRouter);
+app.use(error);
 
 (async function() {
   await server.start();

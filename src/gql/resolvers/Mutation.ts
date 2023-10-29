@@ -10,25 +10,6 @@ type AddTeamArgs = {
   input: AddTeamInput;
 }
 
-type SignupInput = {
-  name: string;
-  email: string;
-  password: string;
-}
-
-type SignupArgs = {
-  input: SignupInput;
-}
-
-type LoginInput = {
-  email: string;
-  password: string;
-}
-
-type LoginArgs = {
-  input: LoginInput;
-}
-
 type AddTeamMemberInput = {
   email: string;
   teamId: number;
@@ -50,83 +31,6 @@ type AddCardArgs = {
 }
 
 export const Mutation = {
-  signup: async (_: any, args: SignupArgs) => {
-    const { email, name, password } = args.input;
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-      }
-    });
-    if (user?.id) {
-      throw new Error('User with that email already exists');
-    }
-
-    try {
-      const newUser = await prisma.user.create({
-        data: {
-          email,
-          name,
-          passwordHash: await bcrypt.hash(password, 10),
-        }
-      });
-
-      const personalBoard = await prisma.team.create({
-        data: {
-          name: "Personal",
-          adminId: newUser.id,
-        }
-      });
-
-      const promises = [
-        await prisma.userTeam.create({
-          data: {
-            team_id: personalBoard.id,
-            user_id: newUser.id,
-          },
-        }),
-        await prisma.user.update({
-          where: {
-            id: newUser.id,
-          },
-          data: {
-            personalBoardId: personalBoard.id,
-          },
-        }),
-      ];
-
-      await Promise.all(promises);
-
-      return jsonwebtoken.sign(
-        { id: newUser?.id, email: newUser?.email, name: newUser.name, personalBoardId: newUser.personalBoardId },
-        process.env.JWT_SECRET as string,
-        { expiresIn: '1y' },
-      );
-    } catch (err) {
-      console.log(err);
-      throw new Error('Something went wrong');
-    }
-  },
-  login: async (_: any, args: LoginArgs) => {
-    const user = await prisma.user.findFirst({
-      where: {
-        email: args.input.email,
-      }
-    });
-
-    if (!user) {
-      throw new Error('No user with that email found');
-    }
-    const validCreds = await bcrypt.compare(args.input.password, user.passwordHash);
-    if (!validCreds) {
-      throw new Error('Not valid credentials');
-    }
-
-    return jsonwebtoken.sign(
-      { id: user.id, email: user.email, name: user.name, personalBoardId: user.personalBoardId, },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '1y' }
-    );
-  },
   addTeam: async (_: any, args: AddTeamArgs, context: Context) => {
     if (!context.user) {
       throw new Error('Unauthorized');
