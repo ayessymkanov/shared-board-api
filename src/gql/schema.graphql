@@ -78,7 +78,7 @@ input LoginInput {
 }
 
 input AddTeamMemberInput {
-  userId: Int!
+  email: String!
   teamId: Int!
 }
 

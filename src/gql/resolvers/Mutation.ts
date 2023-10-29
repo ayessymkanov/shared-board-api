@@ -30,7 +30,7 @@ type LoginArgs = {
 }
 
 type AddTeamMemberInput = {
-  userId: number;
+  email: string;
   teamId: number;
 }
 
@@ -153,20 +153,31 @@ export const Mutation = {
       throw new Error('Unauthorized');
     }
 
-    const team = await prisma.team.findUnique({
-      where: {
-        id: args.input.teamId,
-      },
-    });
+    const [team, user] = await Promise.all([
+      prisma.team.findUnique({
+        where: {
+          id: args.input.teamId,
+        },
+      }),
+      prisma.user.findFirst({
+        where: {
+          email: args.input.email,
+        }
+      })
+    ]);
 
     if (team?.adminId !== context.user.id) {
       throw new Error('Not an admin');
     }
 
+    if (!user) {
+      throw new Error(`No user found with email ${args.input.email}`);
+    }
+
     await prisma.userTeam.create({
       data: {
         team_id: args.input.teamId,
-        user_id: args.input.userId,
+        user_id: user.id,
       },
     });
     return 'added';
