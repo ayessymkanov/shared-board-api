@@ -32,14 +32,10 @@ type AddCardArgs = {
 
 export const Mutation = {
   addTeam: async (_: any, args: AddTeamArgs, context: Context) => {
-    if (!context.user) {
-      throw new Error('Unauthorized');
-    }
-
     const team = await prisma.team.create({
       data: {
         name: args.input.name,
-        adminId: context.user.id,
+        adminId: context.user?.id ?? 0,
       }
     });
 
@@ -53,10 +49,6 @@ export const Mutation = {
     return team;
   },
   addTeamMember: async (_: unknown, args: AddTeamMemberArgs, context: Context) => {
-    if (!context.user) {
-      throw new Error('Unauthorized');
-    }
-
     const [team, user] = await Promise.all([
       prisma.team.findUnique({
         where: {
@@ -70,7 +62,7 @@ export const Mutation = {
       })
     ]);
 
-    if (team?.adminId !== context.user.id) {
+    if (team?.adminId !== context.user?.id) {
       throw new Error('Not an admin');
     }
 
@@ -86,10 +78,7 @@ export const Mutation = {
     });
     return 'added';
   },
-  addCard: async (_: unknown, args: AddCardArgs, context: Context) => {
-    if (!context.user) {
-      throw new Error('Unauthorized');
-    }
+  addCard: async (_: unknown, args: AddCardArgs) => {
     try {
       const card = await prisma.card.create({
         data: {

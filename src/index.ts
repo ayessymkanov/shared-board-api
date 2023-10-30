@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import http from "http";
 import { ApolloServer } from "@apollo/server";
 import cors, { CorsOptions } from "cors";
@@ -6,9 +6,10 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { readFileSync } from "fs";
 import "dotenv/config";
 import { resolvers } from './gql/resolvers';
-import { getUser } from "./utils";
 import authRouter from "./authRoutes";
 import { error } from "./middleware/error";
+import { auth } from "./middleware/auth";
+import { errorLogger } from "./middleware/errorLogger";
 
 const PORT = Number(process.env.PORT ?? 8000);
 const isProd = process.env.NODE_ENV === "prod";
@@ -34,6 +35,7 @@ if (isProd) {
 app.use(express.json());
 app.use(cors<cors.CorsRequest>(corsOptions));
 app.use(authRouter);
+app.use(errorLogger);
 app.use(error);
 
 (async function() {
@@ -41,12 +43,10 @@ app.use(error);
   app.use(
     '/graphql',
     express.json(),
+    auth,
     expressMiddleware(server, {
       context: async ({ req }) => {
-        const authHeader = req.headers.authorization;
-        const token = authHeader?.split(' ')[1];
-        const user = getUser(token);
-        return { user };
+        return { user: req.user };
       }
     })
   );
