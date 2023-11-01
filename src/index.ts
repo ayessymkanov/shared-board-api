@@ -4,6 +4,7 @@ import { ApolloServer } from "@apollo/server";
 import cors, { CorsOptions } from "cors";
 import { expressMiddleware } from "@apollo/server/express4";
 import { readFileSync } from "fs";
+import cookieParser from "cookie-parser";
 import "dotenv/config";
 import { resolvers } from './gql/resolvers';
 import authRouter from "./authRoutes";
@@ -34,6 +35,7 @@ if (isProd) {
 
 app.use(express.json());
 app.use(cors<cors.CorsRequest>(corsOptions));
+app.use(cookieParser())
 app.use(authRouter);
 app.use(errorLogger);
 app.use(error);
@@ -51,6 +53,6 @@ app.use(error);
     })
   );
 
-  await new Promise<void>((resolve) => httpServer.listen({ port: PORT }, resolve));
+  await new Promise<void>((resolve) => httpServer.listen({ port: PORT, host: '127.0.0.1' }, resolve));
   console.log(`Server is listening at http://localhost:${PORT}`);
 })();

@@ -36,8 +36,10 @@ router.post("/signin", async (req: Request, res: Response, next: NextFunction) =
       { expiresIn: '1y' }
     );
 
+    res.cookie('token', token, { httpOnly: true, domain: 'localhost' });
+
     return res.status(200).json({
-      data: { token },
+      data: "Success",
       error: null,
     });
   } catch (err) {
