@@ -8,12 +8,13 @@ generator client {
 }
 
 model User {
-  id           Int        @id @default(autoincrement())
-  name         String
-  email        String
-  passwordHash String
-  personalBoardId Int     @default(autoincrement())
-  UserTeam     UserTeam[] @relation(name: "UserId")
+  id              Int        @id @default(autoincrement())
+  name            String
+  email           String
+  passwordHash    String
+  personalBoardId Int        @default(autoincrement())
+  UserTeam        UserTeam[] @relation(name: "UserId")
+  isActive        Boolean    @default(false)
 }
 
 model Card {
@@ -41,6 +42,18 @@ model UserTeam {
   team_id Int
   user    User @relation(name: "UserId", fields: [user_id], references: [id])
   team    Team @relation(name: "TeamId", fields: [team_id], references: [id])
+}
+
+model Verification {
+  id        String   @id
+  token     String
+  createdAt DateTime @default(now())
+}
+
+model ForgotPassword {
+  id        String   @id 
+  email     String
+  createdAt DateTime @default(now())
 }
 
 enum Status {

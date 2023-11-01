@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import randomString from "randomstring";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -22,3 +23,8 @@ export const convertToDate = (timestamp: number | Date) => {
 
   return `${day}${month}${year}`;
 }
+
+export const generateRandomString = () => randomString.generate({
+  length: 16,
+  charset: 'alphabetic'
+});
