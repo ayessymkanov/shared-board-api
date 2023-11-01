@@ -15,7 +15,9 @@ type CardsArgs = {
 }
 
 type CardsFilterInput = {
-  timestamp?: number;
+  timestamp?: string;
+  startTimestamp?: string;
+  endTimestamp?: string;
 }
 
 export const Query = {
@@ -94,6 +96,16 @@ export const Query = {
       const timestampNum = Number(args.input.timestamp);
       minDate = new Date(timestampNum);
       maxDate = addDays(new Date(timestampNum), 1);
+    }
+
+    if (args?.input?.startTimestamp) {
+      const timestamp = Number(args.input.startTimestamp);
+      minDate = new Date(timestamp);
+    }
+
+    if (args?.input?.endTimestamp) {
+      const timestamp = Number(args.input.endTimestamp);
+      maxDate = new Date(timestamp);
     }
 
     return prisma.card.findMany({

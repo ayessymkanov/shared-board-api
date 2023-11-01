@@ -78,4 +78,6 @@ input AddCardInput {
 
 input CardsFilterInput {
   timestamp: String
+  startTimestamp: String
+  endTimestamp: String
 }
