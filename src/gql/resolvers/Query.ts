@@ -37,7 +37,7 @@ export const Query = {
       where: {
         user_id: context.user?.id,
         NOT: {
-          id: context.user?.personalBoardId,
+          team_id: context.user?.personalBoardId,
         }
       }
     });

@@ -92,7 +92,7 @@ router.post("/signup", async (req: Request, res: Response, next: NextFunction) =
     await Promise.all(promises);
 
     const token = jsonwebtoken.sign(
-      { id: newUser?.id, email: newUser?.email, name: newUser.name, personalBoardId: newUser.personalBoardId },
+      { id: newUser?.id, email: newUser?.email, name: newUser.name, personalBoardId: personalBoard.id },
       process.env.JWT_SECRET as string,
       { expiresIn: '1y' },
     );
@@ -206,4 +206,130 @@ router.post("/resend", async (req: Request, res: Response, next: NextFunction) =
   }
 });
 
+router.post('/forgot', async (req: Request, res: Response, next: NextFunction) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({
+      data: null,
+      error: {
+        message: 'No email was provided',
+      },
+    });
+  }
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      }
+    });
+
+    if (!user) {
+      console.log('no user');
+      throw new Error('No user with that email found');
+    }
+
+    const forgotPasswordId = generateRandomString();
+    await prisma.forgotPassword.create({
+      data: {
+        id: forgotPasswordId,
+        email,
+      },
+    });
+    const link = `${process.env.CLIENT_ORIGIN}/reset/${forgotPasswordId}`;
+
+    sendEmail({
+      to: email,
+      subject: 'Reset your password link',
+      name: 'forgotPassword',
+      templateArgs: { link }
+    });
+
+    return res.status(200).json({
+      data: 'Success',
+      error: null,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/validate-reset', async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({
+      data: null,
+      error: {
+        message: 'Link is incorrect',
+      },
+    });
+  }
+
+  try {
+    const forgotPasswordRecord = await prisma.forgotPassword.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!forgotPasswordRecord) {
+      throw new Error('Link is incorrect');
+    }
+
+    const tenMinutesAgo = sub(new Date(), {
+      minutes: 10,
+    });
+
+    if (new Date(forgotPasswordRecord.createdAt).getTime() <= tenMinutesAgo.getTime()) {
+      throw new Error('Link has expired');
+    }
+
+    return res.status(200).json({
+      data: {
+        email: forgotPasswordRecord.email
+      },
+      error: null,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/reset', async (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      data: null,
+      error: {
+        message: 'Check your payload, email or password is missing',
+      },
+    });
+  }
+
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    await prisma.user.update({
+      where: {
+        id: user?.id,
+      },
+      data: {
+        passwordHash: await bcrypt.hash(password, 10),
+      },
+    });
+
+    return res.status(200).json({
+      data: 'Success',
+      error: null,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
 export default router;

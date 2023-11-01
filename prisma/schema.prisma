@@ -50,6 +50,12 @@ model Verification {
   createdAt DateTime @default(now())
 }
 
+model ForgotPassword {
+  id        String   @id 
+  email     String
+  createdAt DateTime @default(now())
+}
+
 enum Status {
   Open
   Done
