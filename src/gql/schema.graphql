@@ -13,8 +13,6 @@ type Team {
   teamMembers: [User!]!
 }
 
-
-
 enum Status {
   Open
   Done

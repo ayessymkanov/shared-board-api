@@ -43,7 +43,7 @@ app.use(error);
   app.use(
     '/graphql',
     express.json(),
-    auth,
+    // auth,
     expressMiddleware(server, {
       context: async ({ req }) => {
         return { user: req.user };

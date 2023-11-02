@@ -112,14 +112,16 @@ export const Mutation = {
   },
   updateCard: async (_: unknown, args: UpdateCardArgs, context: Context) => {
     try {
+      const updateData = {};
+      for (const attr in args.input) {
+        // @ts-ignore
+        updateData[attr] = args.input[attr];
+      }
       const card = await prisma.card.update({
         where: {
           id: args.id,
         },
-        // @ts-ignore
-        data: {
-          ...args.input,
-        },
+        data: updateData,
       });
 
       return card.id;
