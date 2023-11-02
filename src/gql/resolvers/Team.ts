@@ -1,13 +1,13 @@
-import { Team as TeamType } from "@prisma/client";
 import prisma from "../../prismaClient";
+import { TeamResolvers } from "../types";
 
-export const Team = {
-  cards: (parent: TeamType) => prisma.card.findMany({
+export const Team: TeamResolvers = {
+  cards: (parent) => prisma.card.findMany({
     where: {
       teamId: parent.id,
     }
   }),
-  teamMembers: async (parent: TeamType) => {
+  teamMembers: async (parent) => {
     const userTeamResponse = await prisma.userTeam.findMany({
       where: {
         team_id: parent.id,

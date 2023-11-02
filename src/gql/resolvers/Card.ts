@@ -1,13 +1,15 @@
-import { Card as CardType } from "@prisma/client";
 import prisma from "../../prismaClient";
+import { CardResolvers } from "../types";
 
-export const Card = {
-  assignee: (parent: CardType) => prisma.user.findUnique({
+export const Card: CardResolvers = {
+  // @ts-ignore
+  assignee: (parent) => prisma.user.findUnique({
     where: {
       id: parent.assigneeId,
     },
   }),
-  team: (parent: CardType) => prisma.team.findUnique({
+  // @ts-ignore
+  team: (parent) => prisma.team.findUnique({
     where: {
       id: parent.teamId,
     },
