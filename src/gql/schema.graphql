@@ -13,6 +13,8 @@ type Team {
   teamMembers: [User!]!
 }
 
+
+
 enum Status {
   Open
   Done
@@ -50,7 +52,7 @@ type Mutation {
   addTeam(input: AddTeamInput!): Team!
   addTeamMember(input: AddTeamMemberInput!): String!
   addCard(input: AddCardInput!): String!
-  updateCard(id: ID!, input: AddCardInput): String!
+  updateCard(id: ID!, input: UpdateCardInput): String!
 }
 
 input AddTeamInput {
@@ -68,6 +70,15 @@ input AddCardInput {
   dueDateTime: String!
   teamId: Int!
   description: String
+}
+
+input UpdateCardInput {
+  title: String
+  assigneeId: Int
+  dueDateTime: String
+  teamId: Int
+  description: String
+  status: Status
 }
 
 input CardsFilterInput {

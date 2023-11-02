@@ -29,9 +29,19 @@ type AddCardArgs = {
   input: AddCardInput;
 }
 
+enum Status {
+  Open,
+  In_progress,
+  Done,
+}
+
+type UpdateCardInput = Partial<AddCardInput> & {
+  status?: Status;
+}
+
 type UpdateCardArgs = {
   id: string;
-  input: Partial<AddCardInput>;
+  input: UpdateCardInput;
 }
 
 export const Mutation = {
@@ -91,6 +101,7 @@ export const Mutation = {
           dueDateTime: new Date(args.input.dueDateTime),
           teamId: args.input.teamId,
           description: args.input.description ?? "",
+          status: 'Open',
         }
       });
       return card.id;
@@ -99,13 +110,22 @@ export const Mutation = {
       throw new Error('something went wrong')
     }
   },
-  // updateCard: async (_: unknown, args: UpdateCardArgs, context: Context) => {
-  //   const id = await prisma.card.update({
-  //     where: {
-  //       id: args.id,
-  //     },
-  //     data: { ...args.input },
-  //   });
-  //   // TODO: add history
-  // }
+  updateCard: async (_: unknown, args: UpdateCardArgs, context: Context) => {
+    try {
+      const card = await prisma.card.update({
+        where: {
+          id: args.id,
+        },
+        // @ts-ignore
+        data: {
+          ...args.input,
+        },
+      });
+
+      return card.id;
+    } catch (err) {
+      console.log(err);
+      throw new Error('something went wrong');
+    }
+  }
 };

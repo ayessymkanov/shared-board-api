@@ -22,7 +22,7 @@ model Card {
   id          String   @id @default(uuid())
   assigneeId  Int
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   description String?
   dueDateTime DateTime
   team        Team     @relation(name: "CardTeam", fields: [teamId], references: [id])
