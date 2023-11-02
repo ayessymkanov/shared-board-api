@@ -2,8 +2,7 @@ import prisma from "../../prismaClient";
 import { MutationResolvers } from "../types";
 
 export const Mutation: MutationResolvers = {
-  // @ts-ignore
-  addTeam: async (_, args, context: Context) => {
+  addTeam: async (_, args, context) => {
     try {
       const team = await prisma.team.create({
         data: {
@@ -79,10 +78,9 @@ export const Mutation: MutationResolvers = {
         where: {
           id: args.id,
         },
-        // @ts-ignore
         data: {
           ...args.input,
-        }
+        },
       });
 
       return card.id;

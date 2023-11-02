@@ -1,6 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { User as UserModel, Card as CardModel, Team as TeamModel } from '.prisma/client';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
+export type InputMaybe<T> = undefined | T;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -80,7 +81,7 @@ export type MutationAddTeamMemberArgs = {
 
 export type MutationUpdateCardArgs = {
   id: Scalars['ID']['input'];
-  input?: InputMaybe<UpdateCardInput>;
+  input?: InputMaybe<AddCardInput>;
 };
 
 export type Query = {
@@ -135,15 +136,6 @@ export type Team = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   teamMembers: Array<User>;
-};
-
-export type UpdateCardInput = {
-  assigneeId?: InputMaybe<Scalars['Int']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  dueDateTime?: InputMaybe<Scalars['String']['input']>;
-  status?: InputMaybe<Status>;
-  teamId?: InputMaybe<Scalars['Int']['input']>;
-  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
@@ -229,7 +221,7 @@ export type ResolversTypes = {
   AddTeamInput: AddTeamInput;
   AddTeamMemberInput: AddTeamMemberInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
-  Card: ResolverTypeWrapper<Card>;
+  Card: ResolverTypeWrapper<CardModel>;
   CardsFilterInput: CardsFilterInput;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
@@ -237,9 +229,8 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   Status: Status;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
-  Team: ResolverTypeWrapper<Team>;
-  UpdateCardInput: UpdateCardInput;
-  User: ResolverTypeWrapper<User>;
+  Team: ResolverTypeWrapper<TeamModel>;
+  User: ResolverTypeWrapper<UserModel>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -248,19 +239,18 @@ export type ResolversParentTypes = {
   AddTeamInput: AddTeamInput;
   AddTeamMemberInput: AddTeamMemberInput;
   Boolean: Scalars['Boolean']['output'];
-  Card: Card;
+  Card: CardModel;
   CardsFilterInput: CardsFilterInput;
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
-  Team: Team;
-  UpdateCardInput: UpdateCardInput;
-  User: User;
+  Team: TeamModel;
+  User: UserModel;
 };
 
-export type CardResolvers<ContextType = any, ParentType extends ResolversParentTypes['Card'] = ResolversParentTypes['Card']> = {
+export type CardResolvers<ContextType = any, ParentType = ResolversParentTypes['Card']> = {
   assignee?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   assigneeId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -275,14 +265,14 @@ export type CardResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export type MutationResolvers<ContextType = any, ParentType = ResolversParentTypes['Mutation']> = {
   addCard?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationAddCardArgs, 'input'>>;
   addTeam?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<MutationAddTeamArgs, 'input'>>;
   addTeamMember?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationAddTeamMemberArgs, 'input'>>;
   updateCard?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationUpdateCardArgs, 'id'>>;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type QueryResolvers<ContextType = any, ParentType = ResolversParentTypes['Query']> = {
   card?: Resolver<Maybe<ResolversTypes['Card']>, ParentType, ContextType, RequireFields<QueryCardArgs, 'id'>>;
   cards?: Resolver<Array<ResolversTypes['Card']>, ParentType, ContextType, Partial<QueryCardsArgs>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
@@ -295,7 +285,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
-export type TeamResolvers<ContextType = any, ParentType extends ResolversParentTypes['Team'] = ResolversParentTypes['Team']> = {
+export type TeamResolvers<ContextType = any, ParentType = ResolversParentTypes['Team']> = {
   adminId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   cards?: Resolver<Array<ResolversTypes['Card']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -304,7 +294,7 @@ export type TeamResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type UserResolvers<ContextType = any, ParentType = ResolversParentTypes['User']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

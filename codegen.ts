@@ -5,8 +5,17 @@ const config: CodegenConfig = {
   generates: {
     "./src/gql/types.ts": {
       plugins: ["typescript", "typescript-resolvers"],
-    }
-  }
+    },
+  },
+  config: {
+    mappers: {
+      User: ".prisma/client#User as UserModel",
+      Card: ".prisma/client#Card as CardModel",
+      Team: ".prisma/client#Team as TeamModel",
+    },
+    inputMaybeValue: "undefined | T",
+    allowParentTypeOverride: true,
+  },
 }
 
 export default config;

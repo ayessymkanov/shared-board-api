@@ -1,40 +1,23 @@
 import { addDays } from "date-fns";
 import prisma from "../../prismaClient";
 import { convertToDate } from "../../utils";
+import { QueryResolvers } from "../types";
 
-type ArgsType = {
-  id: number;
-}
-
-type CardArgsType = {
-  id: string;
-}
-
-type CardsArgs = {
-  input: CardsFilterInput;
-}
-
-type CardsFilterInput = {
-  timestamp?: string;
-  startTimestamp?: string;
-  endTimestamp?: string;
-}
-
-export const Query = {
-  me: (_: unknown, args: unknown, context: Context) => {
+export const Query: QueryResolvers = {
+  me: (_, args, context) => {
     return context.user;
   },
-  users: (_: unknown, args: unknown) => {
+  users: () => {
     return prisma.user.findMany();
   },
-  user: (_: unknown, args: ArgsType) => {
+  user: (_, args) => {
     return prisma.user.findUnique({
       where: {
         id: args.id,
       },
     });
   },
-  teams: async (_: unknown, args: unknown, context: Context) => {
+  teams: async (_, args, context: Context) => {
     const userTeamsResponse = await prisma.userTeam.findMany({
       where: {
         user_id: context.user?.id,
@@ -52,7 +35,7 @@ export const Query = {
       },
     });
   },
-  team: async (_: unknown, args: ArgsType, context: Context) => {
+  team: async (_, args, context: Context) => {
     const userTeam = await prisma.userTeam.findFirst({
       where: {
         user_id: context.user?.id,
@@ -70,7 +53,7 @@ export const Query = {
       },
     });
   },
-  teamMembers: async (_: unknown, args: ArgsType, context: Context) => {
+  teamMembers: async (_, args, context) => {
     if (!context.user) {
       throw new Error('Unauthorized');
     }
@@ -88,7 +71,7 @@ export const Query = {
       },
     });
   },
-  cards: (_: unknown, args: CardsArgs, context: Context) => {
+  cards: (_, args, context) => {
     let minDate = new Date("1/1/1970");
     let maxDate = new Date("1/1/2070");
 
@@ -118,21 +101,21 @@ export const Query = {
       }
     });
   },
-  card: async (_: unknown, args: CardArgsType) => {
+  card: async (_, args) => {
     return prisma.card.findUnique({
       where: {
         id: args.id,
       },
     });
   },
-  userCards: (_: unknown, args: unknown, context: Context) => {
+  userCards: (_, args, context) => {
     return prisma.card.findMany({
       where: {
         assigneeId: context.user?.id,
       },
     });
   },
-  today: async (_: unknown, args: unknown, context: Context) => {
+  today: async (_, args, context) => {
     const cards = await prisma.card.findMany({
       where: {
         assigneeId: context.user?.id,
