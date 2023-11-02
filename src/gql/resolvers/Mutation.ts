@@ -1,68 +1,31 @@
 import prisma from "../../prismaClient";
+import { MutationResolvers } from "../types";
 
-type AddTeamInput = {
-  name: string;
-}
+export const Mutation: MutationResolvers = {
+  // @ts-ignore
+  addTeam: async (_, args, context: Context) => {
+    try {
+      const team = await prisma.team.create({
+        data: {
+          name: args.input.name,
+          adminId: context.user?.id ?? 0,
+        }
+      });
 
-type AddTeamArgs = {
-  input: AddTeamInput;
-}
+      await prisma.userTeam.create({
+        data: {
+          team_id: team.id,
+          user_id: team.adminId,
+        }
+      });
 
-type AddTeamMemberInput = {
-  email: string;
-  teamId: number;
-}
-
-type AddTeamMemberArgs = {
-  input: AddTeamMemberInput;
-}
-
-type AddCardInput = {
-  title: string;
-  assigneeId: number;
-  dueDateTime: string;
-  teamId: number;
-  description?: string;
-}
-
-type AddCardArgs = {
-  input: AddCardInput;
-}
-
-enum Status {
-  Open,
-  In_progress,
-  Done,
-}
-
-type UpdateCardInput = Partial<AddCardInput> & {
-  status?: Status;
-}
-
-type UpdateCardArgs = {
-  id: string;
-  input: UpdateCardInput;
-}
-
-export const Mutation = {
-  addTeam: async (_: any, args: AddTeamArgs, context: Context) => {
-    const team = await prisma.team.create({
-      data: {
-        name: args.input.name,
-        adminId: context.user?.id ?? 0,
-      }
-    });
-
-    await prisma.userTeam.create({
-      data: {
-        team_id: team.id,
-        user_id: team.adminId,
-      }
-    });
-
-    return team;
+      return team;
+    } catch (err) {
+      console.log(err);
+      throw new Error("something went wrong");
+    }
   },
-  addTeamMember: async (_: unknown, args: AddTeamMemberArgs, context: Context) => {
+  addTeamMember: async (_, args, context) => {
     const [team, user] = await Promise.all([
       prisma.team.findUnique({
         where: {
@@ -92,7 +55,7 @@ export const Mutation = {
     });
     return 'added';
   },
-  addCard: async (_: unknown, args: AddCardArgs) => {
+  addCard: async (_, args) => {
     try {
       const card = await prisma.card.create({
         data: {
@@ -110,15 +73,16 @@ export const Mutation = {
       throw new Error('something went wrong')
     }
   },
-  updateCard: async (_: unknown, args: UpdateCardArgs, context: Context) => {
+  updateCard: async (_, args) => {
     try {
       const card = await prisma.card.update({
         where: {
           id: args.id,
         },
+        // @ts-ignore
         data: {
           ...args.input,
-        },
+        }
       });
 
       return card.id;
