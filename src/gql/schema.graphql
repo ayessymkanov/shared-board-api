@@ -36,13 +36,13 @@ type Card {
 type Query {
   me: User!
   users: [User!]!
-  user(id: Int!): User
+  user(id: Int!): User!
   teams: [Team!]!
-  team(id: Int!): Team
+  team(id: Int!): Team!
   teamMembers(id: Int!): [User!]!
   cards(input: CardsFilterInput): [Card!]!
   userCards: [Card!]!
-  card(id: String!): Card
+  card(id: String!): Card!
   today: [Card]!
 }
 
