@@ -104,7 +104,7 @@ export const Query = {
     }
 
     if (args?.input?.endTimestamp) {
-      const timestamp = Number(args.input.endTimestamp);
+      const timestamp = Number(args.input.endTimestamp) + 1000;
       maxDate = new Date(timestamp);
     }
 

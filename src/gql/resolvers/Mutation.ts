@@ -110,21 +110,21 @@ export const Mutation = {
       throw new Error('something went wrong')
     }
   },
-  updateCard: async (_: unknown, args: UpdateCardArgs, context: Context) => {
-    try {
-      const card = await prisma.card.update({
-        where: {
-          id: args.id,
-        },
-        data: {
-          ...args.input,
-        },
-      });
-
-      return card.id;
-    } catch (err) {
-      console.log(err);
-      throw new Error('something went wrong');
-    }
-  }
+  // updateCard: async (_: unknown, args: UpdateCardArgs, context: Context) => {
+  //   try {
+  //     const card = await prisma.card.update({
+  //       where: {
+  //         id: args.id,
+  //       },
+  //       data: {
+  //         ...args.input,
+  //       },
+  //     });
+  //
+  //     return card.id;
+  //   } catch (err) {
+  //     console.log(err);
+  //     throw new Error('something went wrong');
+  //   }
+  // }
 };
