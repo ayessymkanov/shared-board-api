@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
 import { sub } from "date-fns";
-import nodemailer from "nodemailer";
 import prisma from "../prismaClient";
 import { generateRandomString, getUser } from "../utils";
 import { sendEmail } from "../utils/email";

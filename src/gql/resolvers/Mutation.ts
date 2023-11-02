@@ -1,5 +1,3 @@
-import bcrypt from "bcrypt";
-import jsonwebtoken from "jsonwebtoken";
 import prisma from "../../prismaClient";
 
 type AddTeamInput = {
@@ -24,10 +22,16 @@ type AddCardInput = {
   assigneeId: number;
   dueDateTime: string;
   teamId: number;
+  description?: string;
 }
 
 type AddCardArgs = {
   input: AddCardInput;
+}
+
+type UpdateCardArgs = {
+  id: string;
+  input: Partial<AddCardInput>;
 }
 
 export const Mutation = {
@@ -86,6 +90,7 @@ export const Mutation = {
           assigneeId: args.input.assigneeId,
           dueDateTime: new Date(args.input.dueDateTime),
           teamId: args.input.teamId,
+          description: args.input.description ?? "",
         }
       });
       return card.id;
@@ -94,4 +99,13 @@ export const Mutation = {
       throw new Error('something went wrong')
     }
   },
+  // updateCard: async (_: unknown, args: UpdateCardArgs, context: Context) => {
+  //   const id = await prisma.card.update({
+  //     where: {
+  //       id: args.id,
+  //     },
+  //     data: { ...args.input },
+  //   });
+  //   // TODO: add history
+  // }
 };

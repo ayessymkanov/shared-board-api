@@ -19,22 +19,14 @@ enum Status {
   In_progress
 }
 
-type CardRaw {
-  title: String!
-  id: ID!
-  assigneeId: Int!
-  createdAt: String!
-  dueDateTime: String!
-  teamId: Int!
-  status: Status!
-}
-
 type Card {
   title: String!
   id: ID!
   assigneeId: Int!
   createdAt: String!
+  updatedAt: String!
   dueDateTime: String!
+  description: String
   teamId: Int!
   status: Status!
   assignee: User!
@@ -58,6 +50,7 @@ type Mutation {
   addTeam(input: AddTeamInput!): Team!
   addTeamMember(input: AddTeamMemberInput!): String!
   addCard(input: AddCardInput!): String!
+  updateCard(id: ID!, input: AddCardInput): String!
 }
 
 input AddTeamInput {
@@ -74,6 +67,7 @@ input AddCardInput {
   assigneeId: Int!
   dueDateTime: String!
   teamId: Int!
+  description: String
 }
 
 input CardsFilterInput {
