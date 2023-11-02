@@ -12,7 +12,7 @@ import { auth } from "./middleware/auth";
 import { errorLogger } from "./middleware/errorLogger";
 
 const PORT = Number(process.env.PORT ?? 8000);
-const isProd = process.env.NODE_ENV === "prod";
+const isProd = process.env.NODE_ENV === "production";
 
 const app = express();
 const httpServer = http.createServer(app);
