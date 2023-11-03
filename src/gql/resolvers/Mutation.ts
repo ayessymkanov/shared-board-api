@@ -1,5 +1,5 @@
 import prisma from "../../prismaClient";
-import { MutationResolvers } from "../types";
+import { MutationResolvers, Status } from "../types";
 
 export const Mutation: MutationResolvers = {
   addTeam: async (_, args, context) => {
@@ -79,8 +79,12 @@ export const Mutation: MutationResolvers = {
           id: args.id,
         },
         data: {
-          ...args.input,
-        },
+          title: args.input?.title,
+          description: args.input?.description,
+          status: args.input?.status,
+          assigneeId: args.input?.assigneeId,
+          dueDateTime: args.input?.dueDateTime,
+        }
       });
 
       return card.id;

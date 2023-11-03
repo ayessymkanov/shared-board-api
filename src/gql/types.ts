@@ -81,19 +81,19 @@ export type MutationAddTeamMemberArgs = {
 
 export type MutationUpdateCardArgs = {
   id: Scalars['ID']['input'];
-  input?: InputMaybe<AddCardInput>;
+  input?: InputMaybe<UpdateCardInput>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  card?: Maybe<Card>;
+  card: Card;
   cards: Array<Card>;
   me: User;
-  team?: Maybe<Team>;
+  team: Team;
   teamMembers: Array<User>;
   teams: Array<Team>;
   today: Array<Maybe<Card>>;
-  user?: Maybe<User>;
+  user: User;
   userCards: Array<Card>;
   users: Array<User>;
 };
@@ -125,7 +125,7 @@ export type QueryUserArgs = {
 
 export enum Status {
   Done = 'Done',
-  InProgress = 'In_progress',
+  InProgress = 'In_Progress',
   Open = 'Open'
 }
 
@@ -136,6 +136,15 @@ export type Team = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
   teamMembers: Array<User>;
+};
+
+export type UpdateCardInput = {
+  assigneeId?: InputMaybe<Scalars['Int']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  dueDateTime?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<Status>;
+  teamId?: InputMaybe<Scalars['Int']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
@@ -230,6 +239,7 @@ export type ResolversTypes = {
   Status: Status;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Team: ResolverTypeWrapper<TeamModel>;
+  UpdateCardInput: UpdateCardInput;
   User: ResolverTypeWrapper<UserModel>;
 };
 
@@ -247,6 +257,7 @@ export type ResolversParentTypes = {
   Query: {};
   String: Scalars['String']['output'];
   Team: TeamModel;
+  UpdateCardInput: UpdateCardInput;
   User: UserModel;
 };
 
@@ -273,14 +284,14 @@ export type MutationResolvers<ContextType = any, ParentType = ResolversParentTyp
 };
 
 export type QueryResolvers<ContextType = any, ParentType = ResolversParentTypes['Query']> = {
-  card?: Resolver<Maybe<ResolversTypes['Card']>, ParentType, ContextType, RequireFields<QueryCardArgs, 'id'>>;
+  card?: Resolver<ResolversTypes['Card'], ParentType, ContextType, RequireFields<QueryCardArgs, 'id'>>;
   cards?: Resolver<Array<ResolversTypes['Card']>, ParentType, ContextType, Partial<QueryCardsArgs>>;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  team?: Resolver<Maybe<ResolversTypes['Team']>, ParentType, ContextType, RequireFields<QueryTeamArgs, 'id'>>;
+  team?: Resolver<ResolversTypes['Team'], ParentType, ContextType, RequireFields<QueryTeamArgs, 'id'>>;
   teamMembers?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryTeamMembersArgs, 'id'>>;
   teams?: Resolver<Array<ResolversTypes['Team']>, ParentType, ContextType>;
   today?: Resolver<Array<Maybe<ResolversTypes['Card']>>, ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
   userCards?: Resolver<Array<ResolversTypes['Card']>, ParentType, ContextType>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };

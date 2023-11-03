@@ -7,7 +7,7 @@
     "dev": "npx nodemon",
     "seed": "ts-node ./prisma/seed.ts",
     "build": "npx prisma generate && tsc && npx prisma migrate deploy",
-    "generate": "graphql-codegen"
+    "codegen": "graphql-codegen"
   },
   "keywords": [],
   "author": "",

@@ -10,6 +10,7 @@ export const Query: QueryResolvers = {
   users: () => {
     return prisma.user.findMany();
   },
+  // @ts-ignore
   user: (_, args) => {
     return prisma.user.findUnique({
       where: {
@@ -35,6 +36,7 @@ export const Query: QueryResolvers = {
       },
     });
   },
+  // @ts-ignore
   team: async (_, args, context: Context) => {
     const userTeam = await prisma.userTeam.findFirst({
       where: {
@@ -101,6 +103,7 @@ export const Query: QueryResolvers = {
       }
     });
   },
+  // @ts-ignore
   card: async (_, args) => {
     return prisma.card.findUnique({
       where: {
