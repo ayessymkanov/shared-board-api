@@ -1,5 +1,6 @@
 import prisma from "../../prismaClient";
-import { MutationResolvers, Status } from "../types";
+import { sendEmail } from "../../utils/email";
+import { MutationResolvers } from "../types";
 
 export const Mutation: MutationResolvers = {
   addTeam: async (_, args, context) => {
@@ -25,7 +26,7 @@ export const Mutation: MutationResolvers = {
     }
   },
   addTeamMember: async (_, args, context) => {
-    const [team, user] = await Promise.all([
+    const [team, user, pendingInvitation] = await Promise.all([
       prisma.team.findUnique({
         where: {
           id: args.input.teamId,
@@ -34,8 +35,14 @@ export const Mutation: MutationResolvers = {
       prisma.user.findFirst({
         where: {
           email: args.input.email,
-        }
-      })
+        },
+      }),
+      prisma.pendingMember.findFirst({
+        where: {
+          email: args.input.email,
+          teamId: args.input.teamId,
+        },
+      }),
     ]);
 
     if (team?.adminId !== context.user?.id) {
@@ -43,7 +50,39 @@ export const Mutation: MutationResolvers = {
     }
 
     if (!user) {
-      throw new Error(`No user found with email ${args.input.email}`);
+      if (!pendingInvitation) {
+        await prisma.pendingMember.create({
+          data: {
+            email: args.input.email,
+            teamId: args.input.teamId,
+          }
+        });
+
+        const inviteLink = `${process.env.CLIENT_ORIGIN}/join`;
+        sendEmail({
+          name: "invite",
+          to: args.input.email,
+          subject: `${context.user.name} has invited you to join their team at SharedBoard`,
+          templateArgs: { name: context.user.name, link: inviteLink },
+        });
+
+        return `User is not registered with us yet.
+        We sent an email with the invitation to join. 
+        Once they sign up, user will be added to your team.`
+      } else {
+        throw new Error(`${args.input.email} has already received your invitation`);
+      }
+    }
+
+    const userTeam = await prisma.userTeam.findFirst({
+      where: {
+        team_id: team?.id,
+        user_id: user.id,
+      },
+    });
+
+    if (userTeam) {
+      throw new Error('Already a member of the team');
     }
 
     await prisma.userTeam.create({
@@ -52,7 +91,7 @@ export const Mutation: MutationResolvers = {
         user_id: user.id,
       },
     });
-    return 'added';
+    return 'Successfully added user to the team';
   },
   addCard: async (_, args) => {
     try {

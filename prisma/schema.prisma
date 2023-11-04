@@ -58,6 +58,13 @@ model ForgotPassword {
   createdAt DateTime @default(now())
 }
 
+model PendingMember {
+  id       String @id @default(uuid())
+  email    String
+  teamId   Int
+  signedUp Boolean @default(false)
+}
+
 enum Status {
   Open
   Done

@@ -64,6 +64,12 @@ router.post("/signup", async (req: Request, res: Response, next: NextFunction) =
       }
     });
 
+    const pendingInvitations = await prisma.pendingMember.findMany({
+      where: {
+        email,
+      },
+    });
+
     const personalBoard = await prisma.team.create({
       data: {
         name: "Personal",
@@ -87,6 +93,17 @@ router.post("/signup", async (req: Request, res: Response, next: NextFunction) =
         },
       }),
     ];
+
+    if (pendingInvitations?.length > 0 && newUser) {
+      for (const invitation of pendingInvitations) {
+        promises.push(await prisma.userTeam.create({
+          data: {
+            team_id: invitation.teamId,
+            user_id: newUser.id,
+          },
+        }));
+      }
+    }
 
     await Promise.all(promises);
 

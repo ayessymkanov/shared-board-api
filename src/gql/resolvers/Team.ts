@@ -13,6 +13,7 @@ export const Team: TeamResolvers = {
         team_id: parent.id,
       }
     });
+
     return prisma.user.findMany({
       where: {
         id: {
