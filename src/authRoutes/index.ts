@@ -216,7 +216,12 @@ router.post("/resend", async (req: Request, res: Response, next: NextFunction) =
     });
 
     const link = `${process.env.CLIENT_ORIGIN}/verify/${ver.id}`;
+    console.log(link);
     sendEmail({ to: email, subject: 'Confirm your email.', name: 'verify', templateArgs: { link } });
+    return res.status(201).json({
+      data: 'Done',
+      error: null,
+    });
   } catch (err) {
     next(err);
   }
